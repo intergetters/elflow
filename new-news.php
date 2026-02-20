@@ -20,6 +20,7 @@ $message = '';
 if ($_POST) {
     $title = trim($_POST['title'] ?? '');
     $content = trim($_POST['content'] ?? '');
+    $video_url = trim($_POST['video_url'] ?? '');
     $song_id = !empty($_POST['song_id']) ? intval($_POST['song_id']) : null;
     
     if ($title && $content) {
@@ -37,9 +38,9 @@ if ($_POST) {
         // Insertar noticia
         $conn2 = new mysqli('sql103.infinityfree.com', 'if0_41136607', 'deromaxim2', 'if0_41136607_djflow');
         if (!$conn2->connect_error) {
-            $stmt2 = $conn2->prepare("INSERT INTO news (title, content, image_path, song_id, download_type) VALUES (?, ?, ?, ?, 'free')");
+            $stmt2 = $conn2->prepare("INSERT INTO news (title, content, video_url, image_path, song_id, download_type) VALUES (?, ?, ?, ?, ?, 'free')");
             if ($stmt2) {
-                $stmt2->bind_param('sssiss', $title, $content, $image_path, $song_id, 'free');
+                $stmt2->bind_param('ssssiss', $title, $content, $video_url, $image_path, $song_id, 'free');
                 $stmt2->execute();
                 $stmt2->close();
             }
@@ -51,17 +52,19 @@ if ($_POST) {
 }
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nueva Noticia</title>
     <style>
-        body { background: #1a1a1a; color: white; padding: 20px; font-family: Arial; }
+        body { font-family: Arial; background: #1a1a1a; color: white; padding: 20px; }
         .container { max-width: 600px; margin: 0 auto; background: #2a2a2a; padding: 20px; border-radius: 10px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; }
         input, textarea, select { width: 100%; padding: 8px; background: #333; color: white; border: none; border-radius: 5px; }
         button { background: #667eea; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        .back { display: inline-block; margin-top: 20px; color: #667eea; text-decoration: none; }
     </style>
 </head>
 <body>
@@ -77,7 +80,11 @@ if ($_POST) {
                 <textarea name="content" rows="4" required></textarea>
             </div>
             <div class="form-group">
-                <label>Imagen (opcional)</label>
+                <label>URL de video (YouTube o Vimeo, opcional)</label>
+                <input type="url" name="video_url" placeholder="https://youtu.be/... o https://vimeo.com/...">
+            </div>
+            <div class="form-group">
+                <label>Imagen de la noticia (opcional)</label>
                 <input type="file" name="news_image" accept=".jpg,.jpeg,.png">
             </div>
             <div class="form-group">
@@ -93,7 +100,7 @@ if ($_POST) {
             </div>
             <button type="submit">📤 Publicar Noticia</button>
         </form>
-        <p><a href="admin.php" style="color:#667eea;">← Volver al panel</a></p>
+        <p><a href="admin-news.php" class="back">← Volver a Gestión de Noticias</a></p>
     </div>
 </body>
 </html>
